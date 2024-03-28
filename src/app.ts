@@ -1,8 +1,6 @@
 import express, { Application } from "express";
 import cors from "cors";
-import exp from "constants";
-import { userRoutes } from "./app/modules/user/user.routes";
-import { adminRoutes } from "./app/modules/admin/admin.routes";
+import router from "./app/routes";
 
 const app: Application = express();
 
@@ -10,8 +8,7 @@ const app: Application = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1", router);
 
 app.get("/", (req, res) => {
   res.send({
