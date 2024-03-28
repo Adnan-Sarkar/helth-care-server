@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { adminServices } from "./admin.service";
 import pick from "../../utils/pick";
 import { adminFilterableFields } from "./admin.constant";
@@ -6,7 +6,11 @@ import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 
 // get all admins
-const getAllAdmins = async (req: Request, res: Response) => {
+const getAllAdmins = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const filters = pick(req.query, adminFilterableFields);
     const pagination = pick(req.query, [
@@ -25,16 +29,16 @@ const getAllAdmins = async (req: Request, res: Response) => {
       data: result.data,
     });
   } catch (error: any) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: error?.name || "Something went wrong!",
-      error,
-    });
+    next(error);
   }
 };
 
 // get admin by id
-const getAdminById = async (req: Request, res: Response) => {
+const getAdminById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const result = await adminServices.getAdminByIdFromDB(id);
@@ -46,16 +50,16 @@ const getAdminById = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: error?.name || "Something went wrong!",
-      error,
-    });
+    next(error);
   }
 };
 
 // update admin by id
-const updateAdminById = async (req: Request, res: Response) => {
+const updateAdminById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const result = await adminServices.updateAdminByIdIntoDB(id, req.body);
@@ -67,16 +71,12 @@ const updateAdminById = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: error?.name || "Something went wrong!",
-      error,
-    });
+    next(error);
   }
 };
 
 // delete admin by id
-const deleteAdmin = async (req: Request, res: Response) => {
+const deleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const result = await adminServices.deleteAdminFromDB(id);
@@ -88,16 +88,16 @@ const deleteAdmin = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: error?.name || "Something went wrong!",
-      error,
-    });
+    next(error);
   }
 };
 
 // soft delete admin by id
-const softDeleteAdmin = async (req: Request, res: Response) => {
+const softDeleteAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const result = await adminServices.softDeleteAdminFromDB(id);
@@ -109,11 +109,7 @@ const softDeleteAdmin = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: error?.name || "Something went wrong!",
-      error,
-    });
+    next(error);
   }
 };
 
