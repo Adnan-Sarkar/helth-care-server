@@ -3,6 +3,7 @@ import { adminServices } from "./admin.service";
 import pick from "../../utils/pick";
 import { adminFilterableFields } from "./admin.constant";
 import sendResponse from "../../utils/sendResponse";
+import httpStatus from "http-status";
 
 // get all admins
 const getAllAdmins = async (req: Request, res: Response) => {
@@ -17,14 +18,14 @@ const getAllAdmins = async (req: Request, res: Response) => {
     const result = await adminServices.getAllAdminsFromDB(filters, pagination);
 
     sendResponse(res, {
-      statusCode: 201,
+      statusCode: httpStatus.CREATED,
       success: true,
       message: "Admins data retrived successfuly",
       meta: result.meta,
       data: result.data,
     });
   } catch (error: any) {
-    res.status(500).json({
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: error?.name || "Something went wrong!",
       error,
@@ -39,13 +40,13 @@ const getAdminById = async (req: Request, res: Response) => {
     const result = await adminServices.getAdminByIdFromDB(id);
 
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admin data retrived successfuly",
       data: result,
     });
   } catch (error: any) {
-    res.status(500).json({
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: error?.name || "Something went wrong!",
       error,
@@ -60,13 +61,13 @@ const updateAdminById = async (req: Request, res: Response) => {
     const result = await adminServices.updateAdminByIdIntoDB(id, req.body);
 
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admin data updated successfuly",
       data: result,
     });
   } catch (error: any) {
-    res.status(500).json({
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: error?.name || "Something went wrong!",
       error,
@@ -81,13 +82,13 @@ const deleteAdmin = async (req: Request, res: Response) => {
     const result = await adminServices.deleteAdminFromDB(id);
 
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admin permanently deleted successfuly",
       data: result,
     });
   } catch (error: any) {
-    res.status(500).json({
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: error?.name || "Something went wrong!",
       error,
@@ -102,13 +103,13 @@ const softDeleteAdmin = async (req: Request, res: Response) => {
     const result = await adminServices.softDeleteAdminFromDB(id);
 
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admin soft deleted successfuly",
       data: result,
     });
   } catch (error: any) {
-    res.status(500).json({
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: error?.name || "Something went wrong!",
       error,
