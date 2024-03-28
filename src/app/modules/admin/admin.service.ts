@@ -32,6 +32,10 @@ const getAllAdminsFromDB = async (query: any, options: any) => {
     });
   }
 
+  andConditions.push({
+    isDeleted: false,
+  });
+
   const whereCondition: Prisma.AdminWhereInput = {
     AND: andConditions,
   };
@@ -62,6 +66,7 @@ const getAdminByIdFromDB = async (id: string) => {
   const result = await prisma.admin.findUnique({
     where: {
       id,
+      isDeleted: false,
     },
   });
 
@@ -73,6 +78,7 @@ const updateAdminByIdIntoDB = async (id: string, data: Partial<Admin>) => {
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false,
     },
   });
 
@@ -120,6 +126,7 @@ const softDeleteAdminFromDB = async (id: string) => {
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false,
     },
   });
 
