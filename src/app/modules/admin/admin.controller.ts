@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { adminServices } from "./admin.service";
 import pick from "../../utils/pick";
 import { adminFilterableFields } from "./admin.constant";
+import sendResponse from "../../utils/sendResponse";
 
 // get all admins
 const getAllAdmins = async (req: Request, res: Response) => {
@@ -15,7 +16,8 @@ const getAllAdmins = async (req: Request, res: Response) => {
     ]);
     const result = await adminServices.getAllAdminsFromDB(filters, pagination);
 
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 201,
       success: true,
       message: "Admins data retrived successfuly",
       meta: result.meta,
@@ -36,7 +38,8 @@ const getAdminById = async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await adminServices.getAdminByIdFromDB(id);
 
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin data retrived successfuly",
       data: result,
@@ -56,7 +59,8 @@ const updateAdminById = async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await adminServices.updateAdminByIdIntoDB(id, req.body);
 
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin data updated successfuly",
       data: result,
@@ -76,7 +80,8 @@ const deleteAdmin = async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await adminServices.deleteAdminFromDB(id);
 
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin permanently deleted successfuly",
       data: result,
@@ -96,7 +101,8 @@ const softDeleteAdmin = async (req: Request, res: Response) => {
     const { id } = req.params;
     const result = await adminServices.softDeleteAdminFromDB(id);
 
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin soft deleted successfuly",
       data: result,
