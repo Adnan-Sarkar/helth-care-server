@@ -70,8 +70,50 @@ const updateAdminById = async (req: Request, res: Response) => {
   }
 };
 
+// delete admin by id
+const deleteAdmin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await adminServices.deleteAdminFromDB(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Admin permanently deleted successfuly",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error?.name || "Something went wrong!",
+      error,
+    });
+  }
+};
+
+// soft delete admin by id
+const softDeleteAdmin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await adminServices.softDeleteAdminFromDB(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Admin soft deleted successfuly",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error?.name || "Something went wrong!",
+      error,
+    });
+  }
+};
+
 export const adminControllers = {
   getAllAdmins,
   getAdminById,
   updateAdminById,
+  deleteAdmin,
+  softDeleteAdmin,
 };
