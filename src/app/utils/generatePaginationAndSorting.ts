@@ -23,6 +23,7 @@ export const generatePaginationAndSorting = (
   return {
     skip,
     limit,
+    page,
     sortObj,
   };
 };
