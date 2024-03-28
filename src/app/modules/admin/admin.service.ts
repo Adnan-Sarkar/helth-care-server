@@ -6,7 +6,7 @@ import prisma from "../../utils/prismaClient";
 // get all admins
 const getAllAdminsFromDB = async (query: any, options: any) => {
   const { searchTerm, ...filterData } = query;
-  const { limit, skip, sortObj } = generatePaginationAndSorting(options);
+  const { limit, skip, sortObj, page } = generatePaginationAndSorting(options);
   const andConditions: Prisma.AdminWhereInput[] = [];
 
   if (searchTerm) {
@@ -43,7 +43,18 @@ const getAllAdminsFromDB = async (query: any, options: any) => {
     orderBy: sortObj,
   });
 
-  return result;
+  const total = await prisma.admin.count({
+    where: whereCondition,
+  });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
 };
 
 export const adminServices = {
