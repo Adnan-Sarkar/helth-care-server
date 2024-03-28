@@ -70,6 +70,12 @@ const getAdminByIdFromDB = async (id: string) => {
 
 // update admin by id
 const updateAdminByIdIntoDB = async (id: string, data: Partial<Admin>) => {
+  await prisma.admin.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
   const result = await prisma.admin.update({
     where: {
       id,
