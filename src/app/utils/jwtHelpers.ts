@@ -13,4 +13,8 @@ const generateToken = (payload: any, secret: string, expiresIn: string) => {
   );
 };
 
-export const jwtHelpers = { generateToken };
+const verifyToken = (token: string, secret: string) => {
+  return jwt.verify(token, secret);
+};
+
+export const jwtHelpers = { generateToken, verifyToken };
