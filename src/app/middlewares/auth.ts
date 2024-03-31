@@ -3,6 +3,8 @@ import { jwtHelpers } from "../utils/jwtHelpers";
 import config from "../config";
 import { JwtPayload } from "jsonwebtoken";
 import { UserRole } from "@prisma/client";
+import AppError from "../error/AppError";
+import httpStatus from "http-status";
 
 const auth = (...userRoles: UserRole[]) => {
   return async (req: Request, _res: Response, next: NextFunction) => {
@@ -10,7 +12,7 @@ const auth = (...userRoles: UserRole[]) => {
       const token = req.headers.authorization;
 
       if (!token) {
-        throw new Error("You are not authorized!");
+        throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
       }
 
       const verifiedUser = jwtHelpers.verifyToken(
@@ -19,7 +21,7 @@ const auth = (...userRoles: UserRole[]) => {
       ) as JwtPayload;
 
       if (userRoles.length > 0 && !userRoles.includes(verifiedUser.role)) {
-        throw new Error("You are not authorized!");
+        throw new AppError(httpStatus.FORBIDDEN, "You are forbidden!");
       } else {
         next();
       }
