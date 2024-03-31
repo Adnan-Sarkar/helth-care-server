@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { jwtHelpers } from "./../../utils/jwtHelpers";
 import { JwtPayload } from "jsonwebtoken";
 import { UserStatus } from "@prisma/client";
+import config from "../../config";
 
 // login
 const login = async (payload: { email: string; password: string }) => {
@@ -24,13 +25,13 @@ const login = async (payload: { email: string; password: string }) => {
 
   const accessToken = jwtHelpers.generateToken(
     userData,
-    "access_secret",
-    "15m"
+    config.JWT_ACCESS_SECRET as string,
+    config.JWT_ACCESS_EXPIRES_IN as string
   );
   const refreshToken = jwtHelpers.generateToken(
     userData,
-    "refresh_secret",
-    "30d"
+    config.JWT_REFRESH_SECRET as string,
+    config.JWT_REFRESH_EXPIRES_IN as string
   );
 
   return {
@@ -58,8 +59,8 @@ const refreshToken = async (token: string) => {
 
   const accessToken = jwtHelpers.generateToken(
     userData,
-    "access_secret",
-    "15m"
+    config.JWT_ACCESS_SECRET as string,
+    config.JWT_ACCESS_EXPIRES_IN as string
   );
 
   return accessToken;
