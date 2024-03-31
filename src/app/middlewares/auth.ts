@@ -7,7 +7,11 @@ import AppError from "../error/AppError";
 import httpStatus from "http-status";
 
 const auth = (...userRoles: UserRole[]) => {
-  return async (req: Request, _res: Response, next: NextFunction) => {
+  return async (
+    req: Request & { user?: any },
+    _res: Response,
+    next: NextFunction
+  ) => {
     try {
       const token = req.headers.authorization;
 
@@ -19,6 +23,8 @@ const auth = (...userRoles: UserRole[]) => {
         token as string,
         config.JWT_ACCESS_SECRET as string
       ) as JwtPayload;
+
+      req.user = verifiedUser;
 
       if (userRoles.length > 0 && !userRoles.includes(verifiedUser.role)) {
         throw new AppError(httpStatus.FORBIDDEN, "You are forbidden!");

@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import catchAsync from "../../middlewares/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { authServices } from "./auth.service";
+import { Request } from "express";
 
 const login = catchAsync(async (req, res) => {
   const loginData = await authServices.login(req.body);
@@ -33,15 +34,17 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
-const changePassword = catchAsync(async (req, res) => {
-  const result = await authServices.changePassword(req.user, req.body);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Password changed successfully",
-    data: result,
-  });
-});
+const changePassword = catchAsync(
+  async (req: Request & { user?: any }, res) => {
+    const result = await authServices.changePassword(req.user, req.body);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Password changed successfully",
+      data: result,
+    });
+  }
+);
 
 export const authController = {
   login,
