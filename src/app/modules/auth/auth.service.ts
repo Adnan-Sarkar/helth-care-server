@@ -45,7 +45,10 @@ const login = async (payload: { email: string; password: string }) => {
 const refreshToken = async (token: string) => {
   let decodedData;
   try {
-    decodedData = jwtHelpers.verifyToken(token, "refresh_secret") as JwtPayload;
+    decodedData = jwtHelpers.verifyToken(
+      token,
+      config.JWT_REFRESH_SECRET as string
+    ) as JwtPayload;
   } catch (error: any) {
     throw new Error("You are not authorized!");
   }
@@ -66,7 +69,41 @@ const refreshToken = async (token: string) => {
   return accessToken;
 };
 
+// change password
+const changePassword = async (user: any, payload: any) => {
+  const userData = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: user.email,
+      status: "ACTIVE",
+    },
+  });
+
+  const isCorrectPassword: boolean = await bcrypt.compare(
+    payload.oldPassword,
+    userData.password
+  );
+
+  if (!isCorrectPassword) {
+    throw new Error("Password is incorrect!");
+  }
+
+  const hashedPassword = await bcrypt.hash(payload.newPassword, 12);
+
+  await prisma.user.update({
+    where: {
+      email: userData.email,
+    },
+    data: {
+      password: hashedPassword,
+      needPasswordChange: false,
+    },
+  });
+
+  return null;
+};
+
 export const authServices = {
   login,
   refreshToken,
+  changePassword,
 };
