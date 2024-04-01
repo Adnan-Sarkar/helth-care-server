@@ -15,7 +15,7 @@ router.post(
 );
 
 router.post(
-  "/reset-password",
+  "/forgot-password",
   auth("ADMIN", "SUPER_ADMIN", "DOCTOR", "PATIENT"),
   authController.forgotPassword
 );
