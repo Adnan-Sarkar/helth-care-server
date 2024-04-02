@@ -5,6 +5,8 @@ import { JwtPayload } from "jsonwebtoken";
 import { UserStatus } from "@prisma/client";
 import config from "../../config";
 import emailSender from "../../utils/sendEmail";
+import AppError from "../../error/AppError";
+import httpStatus from "http-status";
 
 // login
 const login = async (payload: { email: string; password: string }) => {
@@ -51,7 +53,7 @@ const refreshToken = async (token: string) => {
       config.JWT_REFRESH_SECRET as string
     ) as JwtPayload;
   } catch (error: any) {
-    throw new Error("You are not authorized!");
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
   }
 
   const userData = await prisma.user.findUniqueOrThrow({
@@ -85,7 +87,7 @@ const changePassword = async (user: any, payload: any) => {
   );
 
   if (!isCorrectPassword) {
-    throw new Error("Password is incorrect!");
+    throw new AppError(httpStatus.BAD_REQUEST, "Password is incorrect!");
   }
 
   const hashedPassword = await bcrypt.hash(payload.newPassword, 12);
@@ -138,9 +140,48 @@ const forgotPassword = async (payload: any) => {
   return null;
 };
 
+// reset password
+const resetPassword = async (
+  token: string,
+  payload: {
+    id: string;
+    password: string;
+  }
+) => {
+  const userData = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: payload.id,
+      status: "ACTIVE",
+    },
+  });
+
+  try {
+    jwtHelpers.verifyToken(
+      token,
+      config.JWT_ACCESS_SECRET as string
+    ) as JwtPayload;
+  } catch (error: any) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+  }
+
+  const hashedPassword = await bcrypt.hash(payload.password, 12);
+
+  await prisma.user.update({
+    where: {
+      id: userData.id,
+    },
+    data: {
+      password: hashedPassword,
+    },
+  });
+
+  return null;
+};
+
 export const authServices = {
   login,
   refreshToken,
   changePassword,
   forgotPassword,
+  resetPassword,
 };

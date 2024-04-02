@@ -20,4 +20,10 @@ router.post(
   authController.forgotPassword
 );
 
+router.post(
+  "/reset-password",
+  auth("ADMIN", "SUPER_ADMIN", "DOCTOR", "PATIENT"),
+  authController.resetPassword
+);
+
 export const authRoutes = router;
