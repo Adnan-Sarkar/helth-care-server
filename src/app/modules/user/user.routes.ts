@@ -3,6 +3,7 @@ import { userControllers } from "./user.controller";
 import auth from "../../middlewares/auth";
 import uploadImage from "../../utils/uploadImage";
 import { userValidations } from "./user.validation";
+import validateRequet from "../../middlewares/validateRequest";
 
 const router = express.Router();
 
@@ -44,6 +45,13 @@ router.post(
 
     return userControllers.createPatient(req, res, next);
   }
+);
+
+router.patch(
+  "/:id/status",
+  auth("SUPER_ADMIN", "ADMIN"),
+  validateRequet(userValidations.updateUserStatusValidationSchema),
+  userControllers.updateUserStatus
 );
 
 export const userRoutes = router;
