@@ -13,7 +13,7 @@ const getAllAdmins = catchAsync(async (req: Request, res: Response) => {
   const result = await adminServices.getAllAdminsFromDB(filters, pagination);
 
   sendResponse(res, {
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     success: true,
     message: "Admins data retrived successfuly",
     meta: result.meta,
