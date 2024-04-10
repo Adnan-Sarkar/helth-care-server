@@ -186,7 +186,7 @@ const updateUserStatusIntoDB = async (id: string, status: UserRole) => {
 };
 
 // get my profile
-const getMyProfile = async (user) => {
+const getMyProfile = async (user: any) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
       email: user.email,
@@ -227,6 +227,56 @@ const getMyProfile = async (user) => {
   };
 };
 
+// update my profile
+const updateMyProfile = async (user: any, req: Request) => {
+  const userInfo = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: user.email,
+      status: "ACTIVE",
+    },
+    select: {
+      id: true,
+      email: true,
+      needPasswordChange: true,
+      role: true,
+      status: true,
+    },
+  });
+
+  const file = req.file as TFile;
+
+  if (file) {
+    const uploadImage = await imageUploadToCloudinary(file);
+    req.body.profilePhoto = uploadImage.secure_url;
+  }
+
+  let profileInfo;
+  if (userInfo.role === "SUPER_ADMIN" || userInfo.role === "ADMIN") {
+    profileInfo = await prisma.admin.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  } else if (userInfo.role === "DOCTOR") {
+    profileInfo = await prisma.doctor.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  } else if (userInfo.role === "PATIENT") {
+    profileInfo = await prisma.patient.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  }
+
+  return profileInfo;
+};
+
 export const userServices = {
   createAdmin,
   createDoctor,
@@ -234,4 +284,5 @@ export const userServices = {
   getAllUsersFromDB,
   updateUserStatusIntoDB,
   getMyProfile,
+  updateMyProfile,
 };

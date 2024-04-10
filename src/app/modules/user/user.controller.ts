@@ -70,7 +70,7 @@ const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// update user status
+// get my profile
 const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   const result = await userServices.getMyProfile(req.user);
 
@@ -82,6 +82,18 @@ const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// update my profile
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+  const result = await userServices.updateMyProfile(req.user, req);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "My profile updated successfully",
+    data: result,
+  });
+});
+
 export const userControllers = {
   createAdmin,
   createDoctor,
@@ -89,4 +101,5 @@ export const userControllers = {
   getAllusers,
   updateUserStatus,
   getMyProfile,
+  updateMyProfile,
 };
