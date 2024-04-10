@@ -9,9 +9,11 @@ const router = express.Router();
 
 router.get("/", auth("SUPER_ADMIN", "ADMIN"), userControllers.getAllusers);
 
+router.get("/me", auth("SUPER_ADMIN", "ADMIN"), userControllers.getMyProfile);
+
 router.post(
   "/create-admin",
-  auth("SUPER_ADMIN", "ADMIN"),
+  auth("SUPER_ADMIN", "ADMIN", "DOCTOR", "PATIENT"),
   uploadImage.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = userValidations.createAdminValidationSchema.parse(
