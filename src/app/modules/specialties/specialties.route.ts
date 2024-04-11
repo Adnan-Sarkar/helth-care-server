@@ -4,6 +4,8 @@ import uploadImage from "../../utils/uploadImage";
 
 const router = express.Router();
 
+router.get("/specialties", specialtiesController.getAllSpecialties);
+
 router.post(
   "/",
   uploadImage.single("file"),

@@ -15,6 +15,19 @@ const createSpecialties = catchAsync(async (req, res) => {
   });
 });
 
+// get all specialties
+const getAllSpecialties = catchAsync(async (_req, res) => {
+  const result = await specialtiesService.getAllSpecialties();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Get all specialties info successfully",
+    data: result,
+  });
+});
+
 export const specialtiesController = {
   createSpecialties,
+  getAllSpecialties,
 };
