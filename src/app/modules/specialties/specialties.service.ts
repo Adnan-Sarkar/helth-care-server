@@ -24,7 +24,25 @@ const getAllSpecialties = async () => {
   return result;
 };
 
+// delete single specialties info
+const deleteSingleSpecialtiesInfo = async (id: string) => {
+  await prisma.specialties.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  await prisma.specialties.delete({
+    where: {
+      id,
+    },
+  });
+
+  return null;
+};
+
 export const specialtiesService = {
   createSpecialties,
   getAllSpecialties,
+  deleteSingleSpecialtiesInfo,
 };

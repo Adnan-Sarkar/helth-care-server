@@ -27,7 +27,21 @@ const getAllSpecialties = catchAsync(async (_req, res) => {
   });
 });
 
+// delete single specialties info
+const deleteSingleSpecialtiesInfo = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await specialtiesService.deleteSingleSpecialtiesInfo(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Delete single specialties info successfully",
+    data: result,
+  });
+});
+
 export const specialtiesController = {
   createSpecialties,
   getAllSpecialties,
+  deleteSingleSpecialtiesInfo,
 };

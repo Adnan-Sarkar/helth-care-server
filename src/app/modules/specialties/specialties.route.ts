@@ -17,4 +17,9 @@ router.post(
   }
 );
 
+router.delete(
+  "/specialties/:id",
+  specialtiesController.deleteSingleSpecialtiesInfo
+);
+
 export const specialtiesRoutes = router;
