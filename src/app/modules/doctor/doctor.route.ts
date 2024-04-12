@@ -9,6 +9,8 @@ router.get("/:id", doctorController.getSingleDoctorById);
 
 router.patch("/:id", doctorController.softDeleteSingleDoctor);
 
+router.patch("/update/:id", doctorController.updateDoctor);
+
 router.delete("/:id", doctorController.deleteSingleDoctor);
 
 export const doctorRoutes = router;
