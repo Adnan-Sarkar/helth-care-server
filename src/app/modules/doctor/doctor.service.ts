@@ -18,7 +18,46 @@ const getSingleDoctorById = async (id: string) => {
   return result;
 };
 
+// delete single doctor
+const deleteSingleDoctor = async (id: string) => {
+  await prisma.doctor.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  await prisma.doctor.delete({
+    where: {
+      id,
+    },
+  });
+
+  return null;
+};
+
+// soft delete single doctor
+const softDeleteSingleDoctor = async (id: string) => {
+  await prisma.doctor.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  await prisma.doctor.update({
+    where: {
+      id,
+    },
+    data: {
+      isDeleted: true,
+    },
+  });
+
+  return null;
+};
+
 export const doctorService = {
   getAllDoctors,
   getSingleDoctorById,
+  deleteSingleDoctor,
+  softDeleteSingleDoctor,
 };

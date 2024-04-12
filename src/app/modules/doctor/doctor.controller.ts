@@ -28,7 +28,35 @@ const getSingleDoctorById = catchAsync(async (req, res) => {
   });
 });
 
+// delete single doctor
+const deleteSingleDoctor = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await doctorService.deleteSingleDoctor(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor deleted successfully",
+    data: result,
+  });
+});
+
+// soft delete single doctor
+const softDeleteSingleDoctor = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await doctorService.softDeleteSingleDoctor(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor soft deleted successfully",
+    data: result,
+  });
+});
+
 export const doctorController = {
   getAllDoctors,
   getSingleDoctorById,
+  deleteSingleDoctor,
+  softDeleteSingleDoctor,
 };
