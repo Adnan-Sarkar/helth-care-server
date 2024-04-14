@@ -1,3 +1,4 @@
+import { MedicalReport, Patient, PatientHealthData } from "@prisma/client";
 import prisma from "../../utils/prismaClient";
 
 // get all patients
@@ -58,9 +59,65 @@ const softDeleteSinglePatient = async (id: string) => {
   return null;
 };
 
+// update single patient
+const updateSinglePatient = async (
+  id: string,
+  payload: Partial<
+    Patient & { patientHealthData: PatientHealthData } & {
+      medicalReport: MedicalReport;
+    }
+  >
+) => {
+  const { patientHealthData, medicalReport, ...patientInfo } = payload;
+
+  const patientData = await prisma.patient.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  await prisma.$transaction(async (transactionClient) => {
+    await transactionClient.patient.update({
+      where: {
+        id,
+      },
+      data: patientInfo,
+    });
+
+    // create or update patient health data
+    if (patientHealthData) {
+      await transactionClient.patientHealthData.upsert({
+        where: {
+          patientId: patientData.id,
+        },
+        update: patientHealthData,
+        create: { ...patientHealthData, patientId: patientData.id },
+      });
+    }
+
+    // create or update patient medical report
+    if (medicalReport) {
+      await transactionClient.medicalReport.create({
+        data: { ...medicalReport, patientId: patientData.id },
+      });
+    }
+  });
+
+  return await prisma.patient.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    include: {
+      patientHealthData: true,
+      medicalReport: true,
+    },
+  });
+};
+
 export const patientService = {
   getAllPatients,
   getSinglePatient,
   deleteSinglePatient,
   softDeleteSinglePatient,
+  updateSinglePatient,
 };
