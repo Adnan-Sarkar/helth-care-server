@@ -30,10 +30,34 @@ const deleteSinglePatient = async (id: string) => {
     },
   });
 
-  await prisma.patient.delete({
-    where: {
-      id,
-    },
+  await prisma.$transaction(async (transactionClient) => {
+    // delete patient health data
+    await transactionClient.patientHealthData.delete({
+      where: {
+        patientId: id,
+      },
+    });
+
+    // delete patient medical reports
+    await transactionClient.medicalReport.deleteMany({
+      where: {
+        patientId: id,
+      },
+    });
+
+    // delete patient
+    const deletedPatientData = await transactionClient.patient.delete({
+      where: {
+        id,
+      },
+    });
+
+    // delete user
+    await transactionClient.user.delete({
+      where: {
+        email: deletedPatientData.email,
+      },
+    });
   });
 
   return null;
