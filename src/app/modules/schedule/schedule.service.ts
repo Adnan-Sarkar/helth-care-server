@@ -65,6 +65,14 @@ const createSchedule = async (
   return schedules;
 };
 
+// get all schedules
+const getAllSchedules = async () => {
+  const result = await prisma.schedule.findMany();
+
+  return result;
+};
+
 export const scheduleService = {
   createSchedule,
+  getAllSchedules,
 };
