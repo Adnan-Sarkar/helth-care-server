@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import AppError from "../../error/AppError";
 import prisma from "../../utils/prismaClient";
 
 // create doctor schedule
@@ -44,7 +46,38 @@ const getDocotrSchedules = async (user: any) => {
   return result;
 };
 
+// delete doctor schedule
+const deleteDoctorSchedule = async (id: string, user: any) => {
+  const docotrData = await prisma.doctor.findUniqueOrThrow({
+    where: {
+      email: user.email,
+    },
+  });
+
+  const isBookedSchedule = await prisma.doctorSchedules.findFirst({
+    where: {
+      doctorId: docotrData.id,
+      scheduleId: id,
+      isBooked: true,
+    },
+  });
+
+  if (isBookedSchedule) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Schedule is already booked!");
+  }
+
+  const result = await prisma.doctorSchedules.delete({
+    where: {
+      doctorId_scheduleId: {
+        doctorId: docotrData.id,
+        scheduleId: id,
+      },
+    },
+  });
+};
+
 export const doctorScheduleService = {
   createDoctorSchedule,
   getDocotrSchedules,
+  deleteDoctorSchedule,
 };

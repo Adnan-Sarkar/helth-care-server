@@ -30,7 +30,25 @@ const getDocotrSchedules = catchAsync(async (req, res) => {
   });
 });
 
+// delete doctor schedule
+const deleteDoctorSchedule = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await doctorScheduleService.deleteDoctorSchedule(
+    id,
+    req?.user
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Doctor schedule deleted successfully",
+    data: result,
+  });
+});
+
 export const doctorScheduleController = {
   createDoctorSchedule,
   getDocotrSchedules,
+  deleteDoctorSchedule,
 };
