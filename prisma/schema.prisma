@@ -158,13 +158,14 @@ model Schedule {
 model DoctorSchedules {
   doctorId      String
   scheduleId    String
-  appointmentId String?
+  appointmentId String?  @unique
   isBooked      Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  schedule Schedule @relation(fields: [scheduleId], references: [id])
-  doctor   Doctor   @relation(fields: [doctorId], references: [id])
+  schedule    Schedule     @relation(fields: [scheduleId], references: [id])
+  doctor      Doctor       @relation(fields: [doctorId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
 
   @@id([doctorId, scheduleId])
   @@map("doctor_schedules")
@@ -181,9 +182,10 @@ model Appointment {
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
-  patient  Patient  @relation(fields: [patientId], references: [id])
-  doctor   Doctor   @relation(fields: [doctorId], references: [id])
-  schedule Schedule @relation(fields: [scheduleId], references: [id])
+  patient         Patient          @relation(fields: [patientId], references: [id])
+  doctor          Doctor           @relation(fields: [doctorId], references: [id])
+  schedule        Schedule         @relation(fields: [scheduleId], references: [id])
+  DoctorSchedules DoctorSchedules?
 
   @@map("appointments")
 }
