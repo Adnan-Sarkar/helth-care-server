@@ -50,6 +50,19 @@ const createAppointment = async (user: any, payload: any) => {
       },
     });
 
+    const today = new Date();
+    const transactionId = `helthcare-${today.getFullYear()}-${
+      today.getMonth() + 1
+    }-${today.getDay()}-${today.getMilliseconds}`;
+
+    await transactionClient.payment.create({
+      data: {
+        appointmentId: appointmentData.id,
+        amount: doctorData.appointmentFee,
+        transactionId,
+      },
+    });
+
     return appointmentData;
   });
 
