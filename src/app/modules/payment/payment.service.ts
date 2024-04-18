@@ -1,5 +1,7 @@
+import config from "../../config";
 import prisma from "../../utils/prismaClient";
 import { SSLService } from "../SSL/ssl.service";
+import axios from "axios";
 
 // init payment
 const initPayment = async (appointmentId: string) => {
@@ -32,4 +34,48 @@ const initPayment = async (appointmentId: string) => {
   };
 };
 
-export const paymentService = { initPayment };
+// validate payment
+const validatePyment = async (payload: any) => {
+  // In production
+  // if (!payload || !payload.status || !(payload.status === "VALID")) {
+  //   return {
+  //     message: "Invalid Payment!",
+  //   };
+  // }
+
+  // const response = await SSLService.validatePayment(payload);
+
+  // if (response.status !== "VALID") {
+  //   return {
+  //     message: "Invalid Payment!",
+  //   };
+  // }
+
+  const response = payload; // In development
+
+  await prisma.$transaction(async (transactionClient) => {
+    const updatedPaymentData = await transactionClient.payment.update({
+      where: {
+        transactionId: response.tran_id,
+      },
+      data: {
+        status: "PAID",
+      },
+    });
+
+    await transactionClient.appointment.update({
+      where: {
+        id: updatedPaymentData.appointmentId,
+      },
+      data: {
+        paymentStatus: "PAID",
+      },
+    });
+
+    return {
+      message: "Payment successful",
+    };
+  });
+};
+
+export const paymentService = { initPayment, validatePyment };

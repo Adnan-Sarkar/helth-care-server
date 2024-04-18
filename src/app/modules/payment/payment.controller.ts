@@ -17,4 +17,16 @@ const initPayment = catchAsync(async (req, res) => {
   });
 });
 
-export const paymentController = { initPayment };
+// validate payment
+const validatePyment = catchAsync(async (req, res) => {
+  const result = await paymentService.validatePyment(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Payment validate successfully",
+    data: result,
+  });
+});
+
+export const paymentController = { initPayment, validatePyment };
