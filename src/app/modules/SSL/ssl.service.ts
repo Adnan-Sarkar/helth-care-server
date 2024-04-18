@@ -59,6 +59,26 @@ const initSSLPayment = async (paymentData: any) => {
   }
 };
 
+const validatePayment = async (payload: any) => {
+  try {
+    if (!payload || !payload.status || !(payload.status === "VALID")) {
+      return {
+        message: "Invalid Payment!",
+      };
+    }
+
+    const response = await axios({
+      method: "GET",
+      url: `${config.SSLCOMMERZ_VALIDATION_API_URL}?val_id=${payload.val_id}$store_id=${config.SSLCOMMERZ_STORE_ID}&store_passwd=${config.SSLCOMMERZ_STORE_PASSWORD}&format=json`,
+    });
+
+    return response.data;
+  } catch (error: any) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Payment validation failed!");
+  }
+};
+
 export const SSLService = {
   initSSLPayment,
+  validatePayment,
 };
