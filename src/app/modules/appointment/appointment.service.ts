@@ -1,8 +1,10 @@
-import { Prisma, UserRole } from "@prisma/client";
+import { AppointmentStatus, Prisma, UserRole } from "@prisma/client";
 import { TPaginationOptions } from "../../types/pagination";
 import { generatePaginationAndSorting } from "../../utils/generatePaginationAndSorting";
 import prisma from "../../utils/prismaClient";
 import { v4 as uuidv4 } from "uuid";
+import AppError from "../../error/AppError";
+import httpStatus from "http-status";
 
 // create an appointment
 const createAppointment = async (user: any, payload: any) => {
@@ -141,4 +143,44 @@ const getMyAppointment = async (
   };
 };
 
-export const appointmentService = { createAppointment, getMyAppointment };
+// update appointment status
+const updateAppointmentStatus = async (
+  appointmentId: string,
+  status: AppointmentStatus,
+  user: any
+) => {
+  const appointmentData = await prisma.appointment.findUniqueOrThrow({
+    where: {
+      id: appointmentId,
+    },
+    include: {
+      doctor: true,
+    },
+  });
+
+  if (user?.role === UserRole.DOCTOR) {
+    if (!(user?.email === appointmentData.doctor.email)) {
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "This is not your appointment"
+      );
+    }
+  }
+
+  const result = await prisma.appointment.update({
+    where: {
+      id: appointmentData.id,
+    },
+    data: {
+      status,
+    },
+  });
+
+  return result;
+};
+
+export const appointmentService = {
+  createAppointment,
+  getMyAppointment,
+  updateAppointmentStatus,
+};

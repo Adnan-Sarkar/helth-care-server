@@ -12,4 +12,10 @@ router.get(
 
 router.post("/", auth("PATIENT"), appointmentController.createAppointment);
 
+router.patch(
+  "/status/:id",
+  auth("DOCTOR", "ADMIN", "SUPER_ADMIN"),
+  appointmentController.updateAppointmentStatus
+);
+
 export const appointmentRoutes = router;
