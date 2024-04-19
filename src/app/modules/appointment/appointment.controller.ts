@@ -56,8 +56,24 @@ const updateAppointmentStatus = catchAsync(async (req, res) => {
   });
 });
 
+// cancel unpaid appointments
+const cancelUnpaidAppointments = catchAsync(async (req, res) => {
+
+  const result = await appointmentService.cancelUnpaidAppointments(
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Unpaid appointments canceled successfully",
+    data: result,
+  });
+});
+
+
 export const appointmentController = {
   createAppointment,
   getMyAppointment,
   updateAppointmentStatus,
+  cancelUnpaidAppointments
 };
