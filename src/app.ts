@@ -4,6 +4,8 @@ import router from "./app/routes";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import cookieParser from "cookie-parser";
+import corn from "node-cron";
+import { appointmentService } from "./app/modules/appointment/appointment.service";
 
 const app: Application = express();
 
@@ -18,6 +20,12 @@ app.get("/", (req, res) => {
   res.send({
     message: "helth care server",
   });
+});
+
+corn.schedule("* * * * *", () => {
+  try {
+    appointmentService.cancelUnpaidAppointments();
+  } catch (error: any) {}
 });
 
 // error handling
