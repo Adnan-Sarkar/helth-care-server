@@ -52,6 +52,7 @@ model Doctor {
   qualification       String
   currentWorkingPlace String
   designation         String
+  avgRating           Float    @default(0.0)
   isDeleted           Boolean  @default(false)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -216,7 +217,7 @@ model Prescription {
   id            String   @id @default(uuid())
   appointmentId String   @unique
   doctorId      String
-  PatientId     String
+  patientId     String
   instructions  String
   followUpDate  DateTime
   createdAt     DateTime @default(now())
@@ -224,14 +225,14 @@ model Prescription {
 
   appointment Appointment @relation(fields: [appointmentId], references: [id])
   doctor      Doctor      @relation(fields: [doctorId], references: [id])
-  patient     Patient     @relation(fields: [PatientId], references: [id])
+  patient     Patient     @relation(fields: [patientId], references: [id])
 
   @@map("prescriptions")
 }
 
 model Review {
   id            String   @id @default(uuid())
-  PatientId     String
+  patientId     String
   doctorId      String
   appointmentId String   @unique
   rating        Float
@@ -239,7 +240,7 @@ model Review {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  patient     Patient     @relation(fields: [PatientId], references: [id])
+  patient     Patient     @relation(fields: [patientId], references: [id])
   doctor      Doctor      @relation(fields: [doctorId], references: [id])
   appointment Appointment @relation(fields: [appointmentId], references: [id])
 
