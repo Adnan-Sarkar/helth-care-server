@@ -29,4 +29,20 @@ const validatePyment = catchAsync(async (req, res) => {
   });
 });
 
-export const paymentController = { initPayment, validatePyment };
+// get all unpaid payments
+const getAllUnpaidPayments = catchAsync(async (req, res) => {
+  const result = await paymentService.getAllUnpaidPayments();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Getting all unpaid payments successfully",
+    data: result,
+  });
+});
+
+export const paymentController = {
+  initPayment,
+  validatePyment,
+  getAllUnpaidPayments,
+};
