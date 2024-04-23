@@ -78,4 +78,22 @@ const validatePyment = async (payload: any) => {
   });
 };
 
-export const paymentService = { initPayment, validatePyment };
+// get all unpaid payments
+const getAllUnpaidPayments = async () => {
+  const result = await prisma.payment.findMany({
+    where: {
+      status: "UNPAID",
+    },
+    include: {
+      appointment: true,
+    },
+  });
+
+  return result;
+};
+
+export const paymentService = {
+  initPayment,
+  validatePyment,
+  getAllUnpaidPayments,
+};
