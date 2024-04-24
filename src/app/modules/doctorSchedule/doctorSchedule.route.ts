@@ -10,6 +10,12 @@ router.get(
   doctorScheduleController.getDocotrSchedules
 );
 
+router.get(
+  "/",
+  auth("ADMIN", "SUPER_ADMIN"),
+  doctorScheduleController.getAllDocotrSchedules
+);
+
 router.post("/", auth("DOCTOR"), doctorScheduleController.createDoctorSchedule);
 
 router.delete(
