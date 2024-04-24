@@ -46,6 +46,17 @@ const getDocotrSchedules = async (user: any) => {
   return result;
 };
 
+// get all doctor schedules
+const getAllDocotrSchedules = async () => {
+  const result = await prisma.doctorSchedules.findMany({
+    include: {
+      doctor: true,
+    },
+  });
+
+  return result;
+};
+
 // delete doctor schedule
 const deleteDoctorSchedule = async (id: string, user: any) => {
   const docotrData = await prisma.doctor.findUniqueOrThrow({
@@ -80,4 +91,5 @@ export const doctorScheduleService = {
   createDoctorSchedule,
   getDocotrSchedules,
   deleteDoctorSchedule,
+  getAllDocotrSchedules,
 };
